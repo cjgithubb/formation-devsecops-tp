@@ -33,8 +33,15 @@ stage('Mutation Tests - PIT') {
      	}
    	}
 	}
+stage('Vulnerability Scan - Docker Trivy') {
+       steps {
+//--------------------------replace variable  token_github on file trivy-image-scan.sh
+         withCredentials([string(credentialsId: 'trivy_corentin', variable: 'TOKEN')]) {
+  sh "sed -i 's#token_github#${TOKEN}#g' trivy-image-scan.sh"      
+  sh "sudo bash trivy-image-scan.sh"
+        }
+       }
 
-
-
+}
     }
 }
