@@ -43,5 +43,19 @@ stage('Vulnerability Scan - Docker Trivy') {
        }
 
 }
+
+
+stage('Docker Build and Push') {
+  	steps {
+    	withCredentials([string(credentialsId: 'docker-hub-thorondor1', variable: 'DOCKER_HUB_PASSWORD')]) {
+      	sh 'sudo docker login -u thorondor1 -p $DOCKER_HUB_PASSWORD'
+      	sh 'printenv'
+      	sh 'sudo docker build -t thorondor1/devops-app:""$GIT_COMMIT"" .'
+      	sh 'sudo docker push thorondor1/devops-app:""$GIT_COMMIT""'
+    	}
+
+  	}
+	}
+
     }
 }
