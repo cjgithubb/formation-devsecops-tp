@@ -50,7 +50,7 @@ stage('Vulnerability Scan - Docker Trivy') {
 stage('Docker Build and Push') {
   	steps {
     	withCredentials([string(credentialsId: 'docker-hub-thorondor1', variable: 'DOCKER_HUB_PASSWORD')]) {
-      	sh 'sudo docker login -u thorondor1 -p $DOCKER_HUB_PASSWORD'
+      	sh 'sudo docker login -u thorondor1 -p $DOCKER_HUB_PASSWORD' //test
       	sh 'printenv'
       	sh 'sudo docker build -t thorondor1/devops-app:""$GIT_COMMIT"" .'
       	sh 'sudo docker push thorondor1/devops-app:""$GIT_COMMIT""'
@@ -58,6 +58,27 @@ stage('Docker Build and Push') {
 
   	}
 	}
+
+
+stage('SonarQube - SAST') {
+     	 
+       	steps {
+   		catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+     	withSonarQubeEnv('SonarQube') {
+
+
+        	sh "mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=projectcorentin \
+  -Dsonar.projectName='projectcorentin' \
+  -Dsonar.host.url=http://mytpm.eastus.cloudapp.azure.com:9112 \
+  -Dsonar.token=sqp_d183b92e8c9449be24c65c8ac48b02aa0e69212d"
+     	}
+ 
+   		}
+   	}
+     	 
+ 
+ 	}
 
     }
 }
